@@ -1,12 +1,29 @@
-name: 'Report Arduino Sketch Size Deltas'
-description: 'Comments on the pull request with a report on the resulting change in memory usage of Arduino sketches'
-inputs:
-  sketches-reports-source:
-    description: 'When run from scheduled workflow, name of the workflow artifact that contains sketches reports. When run from a pull request triggered workflow, path to the folder containing sketches reports.'
-    default: 'sketches-reports'
-  github-token:
-    description: 'GitHub access token used to comment the memory usage comparison results to the PR thread'
-    default: ${{ github.token }}
-runs:
-  using: 'docker'
-  image: 'Dockerfile'
+name: Compile Sketch
+
+# The workflow will run on every push and pull request to the repository
+on:
+  - push
+  - pull_request
+
+jobs:
+  compile-sketch:
+    runs-on: ubuntu-latest
+
+    steps:
+      # This step makes the contents of the repository available to the workflow
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # For more information: https://github.com/arduino/compile-sketches#readme
+      - name: Compile sketch
+        uses: arduino/compile-sketches@v1
+        with:
+          # The default is to compile for the Arduino Uno board. If you want to compile for other boards, use the `fqbn` input.
+          sketch-paths: |
+            # Configure the action to search all folders under the root of the repository for sketches and compile them.
+            # This is formatted as a YAML list, which makes it possible to have multiple sketch paths if needed.
+            - ./
+          libraries: |
+            # The "blink" sketch being compiled in this demo doesn't use any libraries, so just use an empty list
+            -
+
