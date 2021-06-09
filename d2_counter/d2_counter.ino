@@ -8,6 +8,10 @@ Tachometer tacho;
 #include <GyverOS.h>
 GyverOS<3> OS;
 
+#include <SPI.h>
+#include <SD.h>
+File myFile;
+
 int long counter = 0;
 
 void setup() {
